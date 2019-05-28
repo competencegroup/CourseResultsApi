@@ -1,0 +1,93 @@
+---
+openapi: 3.0.2
+info:
+  title: DetailedLearningResults
+  description: Request the learning results per subject of one or more courses.
+  version: 1.0.0
+paths:
+  /courseResult/{resourceLinkId}/{userId}:
+    get:
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/courseResult'
+    parameters:
+    - name: resourceLinkId
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+components:
+  schemas:
+    subjectScore:
+      title: Root Type for subjectScore
+      description: The root of the subjectScore type's schema.
+      required:
+      - name
+      - score
+      type: object
+      properties:
+        name:
+          type: string
+        score:
+          format: double
+          type: number
+      example: |-
+        {
+            "name": "Subject 1",
+            "score": 0.9
+        }
+    courseResult:
+      title: Root Type for courseResult
+      description: The root of the courseResult type's schema.
+      required:
+      - subjects
+      - totalScore
+      - userId
+      - finishDate - targetId
+      type: object
+      properties:
+        userId:
+          type: string
+        targetId:
+          type: string
+        totalScore:
+          format: double
+          type: number
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/subjectScore'
+        finishDate:
+          format: date-time
+          type: string
+      example: |-
+        {
+            "userId": "string",
+            "targetId": "guid",
+            "totalScore": 0.889,
+            "subjects": [
+                {
+                    "name": "Theme 1",
+                    "score": 0.9
+                },
+                {
+                    "name": "Theme 2",
+                    "score": 0.86
+                }
+            ]
+        }
+  securitySchemes:
+    tcg-sts:
+      type: openIdConnect
+      openIdConnectUrl: https://sts.competence.biz/identity
+security:
+- tcg-sts: []
